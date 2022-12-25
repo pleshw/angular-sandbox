@@ -1,0 +1,18 @@
+<div id="gridInfo" class="row justify-content-center px-5" [hidden]="!showInfo">
+  <div class="col-1 badge bg-dark bg-gradient text-wrap m-1 p-2">
+    <small><i>Width: {{getWidth()}}</i></small>
+  </div>
+
+  <div class="col-1 badge bg-dark bg-gradient text-wrap m-1 p-2">
+    <small><i>Height: {{getHeight()}}</i></small>
+  </div>
+</div>
+
+
+<div class="row col-12 justify-content-center container" id="gridCells">
+  <div class="row justify-content-around align-items-center" *ngFor="let y of getNumberSequence(grid.height)">
+    <div class="col justify-content-center align-items-center" *ngFor="let x of getNumberSequence(grid.width)">
+      <app-grid-cell [cell]="grid.getCell(x, y)"></app-grid-cell>
+    </div>
+  </div>
+</div>
