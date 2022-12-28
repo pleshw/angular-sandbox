@@ -2,6 +2,8 @@ import { Component, Input } from '@angular/core';
 import { getNumberSequence } from '../arrayTools';
 import { Grid } from "../grid";
 import { Cell } from '../cell';
+import { rowColToIndex, Point2D } from '../mathTools';
+import { GridCellComponent } from '../grid-cell/grid-cell.component';
 
 @Component( {
   selector: 'app-grid',
@@ -13,10 +15,49 @@ export class GridComponent {
   @Input() height?: number = 3;
   @Input() showInfo?: boolean = false;
 
+  selectedBefore?: GridCellComponent;
+  selectedCell?: GridCellComponent;
+
   grid: Grid<number>;
 
   getNumberSequence( n: number ) {
     return getNumberSequence( n );
+  }
+
+  rowColToIndex( x: number, y: number ) {
+    return rowColToIndex( y, x, this.getWidth() )
+  }
+
+  grabCell( cell: GridCellComponent ) {
+    if ( this.selectedCell ) {
+      this.selectedBefore = this.selectedCell;
+    }
+
+    this.selectedCell = cell;
+  }
+
+  trySwapCellWithSelected( cell: GridCellComponent, x: number, y: number ) {
+    if ( this.selectedCell ) {
+      this.selectedBefore = this.selectedCell;
+
+      if ( this.selectedBefore.cell && this.selectedBefore.cell.gridReference && this.selectedBefore.cell.gridReference.position ) {
+        const selectedBeforePosition = this.selectedBefore.cell.gridReference.position;
+        this.grid.swapCells( selectedBeforePosition.x, selectedBeforePosition.y, x, y );
+      }
+
+      this.clearSelected();
+    } else {
+      this.grabCell( cell );
+    }
+  }
+
+  clearSelected() {
+    this.selectedCell = undefined;
+    this.selectedBefore = undefined;
+  }
+
+  getCellId( x: number, y: number ) {
+    return 'cell' + this.rowColToIndex( x, y );
   }
 
   getWidth(): number {
@@ -40,7 +81,6 @@ export class GridComponent {
     } );
   }
 
-
   ngOnChanges(): void {
     this.grid = new Grid<number>( {
       dimensions: {
@@ -52,4 +92,6 @@ export class GridComponent {
       } )
     } );
   }
+
+
 }

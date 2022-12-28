@@ -1,3 +1,8 @@
-<div class="text-center p-3 border m-2">
-  <span>{{cell?.content}}</span>
+<div class="row justify-content-center align-items-center cell-placeholder p-3 m-2">
+  <div (mousedown)="trySwapCellWithSelected(this)" (touchstart)="grabCell(this)" (mouseup)="dropCell(this)"
+    (touchend)="dropCell(this)" ((mouseleave))="dropCell(this)"
+    class="row justify-content-center align-items-center cell-content border"
+    [ngClass]="this.isGrabbed ? 'grabbing': 'grab'">
+    <span class="text-center">{{cell?.content}}</span>
+  </div>
 </div>

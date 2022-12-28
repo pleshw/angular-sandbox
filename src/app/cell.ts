@@ -1,15 +1,33 @@
+import { Point2D } from './mathTools';
+
+export type CellInputParameters<T> = {
+  content?: T;
+  gridReference?: CellGridReference;
+  fillState?: CellFillState;
+  openState?: CellOpenState;
+  accessState?: CellAccessState;
+  onContentChange?: ( newContent: T | undefined, cell: Cell<T> ) => void;
+}
+
+export type CellGridReference = {
+  position?: Point2D;
+  index?: number;
+}
+
 export class Cell<T> implements ICell {
   private _content?: T;
 
+  public gridReference?: CellGridReference;
   public fillState: CellFillState;
   public openState: CellOpenState;
   public accessState: CellAccessState;
 
-  public onContentChange: ( cell: Cell<T>, newContent: T | undefined ) => void;
+  public onContentChange: ( newContent: T | undefined, cell: Cell<T> ) => void;
 
-  constructor( { content, fillState, openState, accessState, onContentChange }: { content?: T; fillState?: CellFillState; openState?: CellOpenState; accessState?: CellAccessState; onContentChange?: ( cell: Cell<T>, newContent: T | undefined ) => void; } = {} ) {
+  constructor( { content, fillState, openState, accessState, onContentChange, gridReference }: CellInputParameters<T> = {} ) {
     this._content = content;
 
+    this.gridReference = gridReference;
     this.onContentChange = onContentChange || ( () => { } );
     this.fillState = fillState || CellFillState.EMPTY;
     this.openState = openState || CellOpenState.ALL;
@@ -20,6 +38,7 @@ export class Cell<T> implements ICell {
     this.fillState = CellFillState.EMPTY;
     this.openState = CellOpenState.ALL;
     this.accessState = CellAccessState.FREE;
+    this.onContentChange( this._content, this );
   }
 
   get content(): T | undefined {
@@ -32,6 +51,8 @@ export class Cell<T> implements ICell {
     this.openState = newCell.openState;
     this.accessState = newCell.accessState;
     this.onContentChange = newCell.onContentChange;
+    this.onContentChange( this._content, this );
+    return this;
   }
 
   public static copyTo<T>( replaceWith: Cell<T>, newCell: Cell<T> ) {
@@ -40,10 +61,22 @@ export class Cell<T> implements ICell {
     newCell.openState = replaceWith.openState;
     newCell.accessState = replaceWith.accessState;
     newCell.onContentChange = replaceWith.onContentChange;
+
+    newCell.onContentChange( newCell._content, newCell );
+  }
+
+  public static swap<T>( cellA: Cell<T>, cellB: Cell<T> ) {
+    const placeholder = new Cell<T>().copy( cellA );
+
+    cellA.copy( cellB );
+    cellB.copy( placeholder );
+
+    cellA.onContentChange( cellA._content, cellA );
+    cellB.onContentChange( cellB._content, cellB );
   }
 
   set content( newContent: T | undefined ) {
-    this.onContentChange( this, newContent );
+    this.onContentChange( newContent, this );
 
     this._content = newContent;
   }

@@ -12,7 +12,9 @@
 <div class="row col-12 justify-content-center container" id="gridCells">
   <div class="row justify-content-around align-items-center" *ngFor="let y of getNumberSequence(grid.height)">
     <div class="col justify-content-center align-items-center" *ngFor="let x of getNumberSequence(grid.width)">
-      <app-grid-cell [cell]="grid.getCell(x, y)"></app-grid-cell>
+      <app-grid-cell (grabCellEvent)="grabCell($event)"
+        (trySwapCellWithSelectedEvent)="trySwapCellWithSelected($event, x, y)" [id]="getCellId(x, y)"
+        [cell]="grid.getCell(x, y)"></app-grid-cell>
     </div>
   </div>
 </div>

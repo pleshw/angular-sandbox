@@ -1,0 +1,27 @@
+* {
+  user-select: none !important;
+  -webkit-user-drag: none;
+  box-sizing: border-box;
+}
+
+.grab {
+  cursor: grab;
+}
+
+.grabbing {
+  cursor: grabbing;
+  position: absolute;
+}
+
+.cell-placeholder {
+  position: relative;
+  overflow: visible;
+  min-height: 100px;
+  min-width: 100px;
+}
+
+.cell-content {
+  background-color: white;
+  min-height: 100px;
+  min-width: 100px;
+}

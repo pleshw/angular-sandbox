@@ -17,6 +17,13 @@ export function indexToCol( index: number, gridWidth: number ) {
   return index % gridWidth;
 }
 
+export function indexToPoint2D( index: number, gridWidth: number ): Point2D {
+  return {
+    x: indexToCol( index, gridWidth ),
+    y: indexToRow( index, gridWidth )
+  };
+}
+
 export function rowColToIndex( row: number, col: number, width: number ) {
   return ( row * width ) + col;
 }
